@@ -6,6 +6,7 @@ from flask import Flask, request, abort, jsonify
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 
+from chat import get_reply
 from process_doc import index_file
 from constants import (
     PATH_TO_UPLOADS,
@@ -56,6 +57,16 @@ list_documents: returns the list of documents stored on server
 @app.route('/list-documents', methods=['GET'])
 def list_documents():
     return jsonify({'documents': os.listdir(app.config[UPLOAD_FOLDER])})
+
+
+@app.route('/chat', methods=['POST'])
+def chat():
+    body = request.get_json()
+    if not body or not body['query'] or not body['index']:
+        abort(400)
+
+    response = get_reply(body['query'], body['index'])
+    return jsonify({'reply': response})
 
 
 # Helpers

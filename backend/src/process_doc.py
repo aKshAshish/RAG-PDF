@@ -17,16 +17,15 @@ from constants import (
     VECTORE_STORE_KEY,
     AZURE_OPENAI_ENDPOINT,
     AZURE_OPENAI_API_KEY,
-    OPENAI_MODEL_NAME,
-    OPENAI_API_VERSION,
+    AZURE_OPENAI_EMBED_MODEL_VERSION,
     AZURE_OPENAI_EMBED_MODEL_NAME
 )
 
-def get_embeddings_model():
+def get_embedding_model():
     embeddings = AzureOpenAIEmbeddings(
         azure_deployment=AZURE_OPENAI_EMBED_MODEL_NAME,
         azure_endpoint=AZURE_OPENAI_ENDPOINT,
-        api_version=OPENAI_API_VERSION,
+        api_version=AZURE_OPENAI_EMBED_MODEL_VERSION,
         api_key=AZURE_OPENAI_API_KEY,
     )
     return embeddings
@@ -72,8 +71,7 @@ def initialize_vector_store(embedding_model):
 
     return fields
 
-def get_vector_store(embedding_model, filename):
-    index_name = f'{filename.replace('.', '')}-index'
+def get_vector_store(embedding_model, index_name):
     vector_store = AzureSearch(
         azure_search_endpoint=VECTOR_STORE_ENDPOINT,
         azure_search_key= VECTORE_STORE_KEY,
@@ -107,9 +105,9 @@ def process_pdf_to_splits(filename):
 
 def index_file(filename):
     splits = process_pdf_to_splits(filename)
-    embedding_model = get_embeddings_model()
+    embedding_model = get_embedding_model()
     initialize_vector_store(embedding_model)
-    vector_store = get_vector_store(embedding_model, filename)
+    vector_store = get_vector_store(embedding_model, index_name=f'{filename.replace('.', '')}-index')
 
     vector_store.add_documents(splits)
     print(f'[INFO] - Document upload complete: {filename}')

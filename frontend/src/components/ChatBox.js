@@ -21,9 +21,18 @@ const ChatBox = () => {
         setChatText("");
         newChats = [...chats, { type: ChatType.QUERY, text: query }];
         setChats(newChats);
-        const reply = getReply(query);
-        setChats([...newChats, { type: ChatType.REPLY, text: reply }]);
-        setIsWaiting(false); // Enable the chat button.
+        getReply(query, "gfspdf-index")
+            .then((respone) => respone.json())
+            .then((response) => {
+                const reply = response?.reply || "No response";
+                setChats([...newChats, { type: ChatType.REPLY, text: reply }]);
+            })
+            .catch((err) => {
+                alert(`Error: ${err}`);
+            })
+            .finally(() => {
+                setIsWaiting(false);
+            });
     };
 
     useEffect(() => {
@@ -39,7 +48,6 @@ const ChatBox = () => {
         // Upload File to server
         uploadFile(file)
             .then((response) => {
-                console.log(response);
                 if (response && response.status === 200) {
                     alert(`File ${file.name} is uploaded successfully.`);
                 }
