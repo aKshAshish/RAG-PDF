@@ -39,6 +39,7 @@ const ChatBox = () => {
         // Upload File to server
         uploadFile(file)
             .then((response) => {
+                console.log(response);
                 if (response && response.status === 200) {
                     alert(`File ${file.name} is uploaded successfully.`);
                 }

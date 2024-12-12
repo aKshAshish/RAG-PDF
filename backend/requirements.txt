@@ -1,3 +1,11 @@
 flask
 python-dotenv
 flask_cors
+langchain
+langchain_chroma
+langchain_community
+langchain_core
+langchain_openai
+pymupdf
+azure-search-documents
+azure-identity
